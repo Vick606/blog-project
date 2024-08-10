@@ -5,9 +5,23 @@ const loginForm = document.getElementById('login-form');
 const postForm = document.getElementById('post-form');
 const loginSection = document.getElementById('login-section');
 const postsSection = document.getElementById('posts-section');
+const commentsSection = document.getElementById('comments-section');
+const newPostBtn = document.getElementById('new-post-btn');
+const postFormContainer = document.getElementById('post-form-container');
 
 loginForm.addEventListener('submit', login);
-postForm.addEventListener('submit', createPost);
+postForm.addEventListener('submit', savePost);
+newPostBtn.addEventListener('click', () => {
+    postFormContainer.style.display = 'block';
+    postForm.reset();
+    postForm.dataset.mode = 'create';
+});
+
+tinymce.init({
+    selector: '#content',
+    plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+    toolbar_mode: 'floating',
+});
 
 async function login(e) {
     e.preventDefault();
@@ -35,14 +49,18 @@ async function login(e) {
     }
 }
 
-async function createPost(e) {
+async function savePost(e) {
     e.preventDefault();
     const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
+    const content = tinymce.get('content').getContent();
+    const mode = postForm.dataset.mode;
+    const id = postForm.dataset.id;
 
     try {
-        const response = await fetch(`${API_URL}/posts`, {
-            method: 'POST',
+        const url = mode === 'create' ? `${API_URL}/posts` : `${API_URL}/posts/${id}`;
+        const method = mode === 'create' ? 'POST' : 'PUT';
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -52,8 +70,9 @@ async function createPost(e) {
         const newPost = await response.json();
         fetchPosts();
         postForm.reset();
+        postFormContainer.style.display = 'none';
     } catch (error) {
-        console.error('Error creating post:', error);
+        console.error('Error saving post:', error);
     }
 }
 
@@ -78,22 +97,107 @@ function displayPosts(posts) {
         postElement.classList.add('post');
         postElement.innerHTML = `
             <h3>${post.title}</h3>
-            <p>${post.content}</p>
+            <p class="${post.published ? 'published' : 'unpublished'}">
+                ${post.published ? 'Published' : 'Unpublished'}
+            </p>
+            <button onclick="editPost(${post.id})">Edit</button>
+            <button onclick="togglePublishPost(${post.id}, ${!post.published})">
+                ${post.published ? 'Unpublish' : 'Publish'}
+            </button>
             <button onclick="deletePost(${post.id})">Delete</button>
+            <button onclick="viewComments(${post.id})">View Comments</button>
         `;
         postsList.appendChild(postElement);
     });
 }
 
-async function deletePost(id) {
+async function editPost(id) {
+    try {
+        const response = await fetch(`${API_URL}/posts/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const post = await response.json();
+        document.getElementById('title').value = post.title;
+        tinymce.get('content').setContent(post.content);
+        postForm.dataset.mode = 'edit';
+        postForm.dataset.id = id;
+        postFormContainer.style.display = 'block';
+    } catch (error) {
+        console.error('Error fetching post for edit:', error);
+    }
+}
+
+async function togglePublishPost(id, publishState) {
     try {
         await fetch(`${API_URL}/posts/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ published: publishState })
         });
         fetchPosts();
     } catch (error) {
-        console.error('Error deleting post:', error);
+        console.error('Error toggling post publish state:', error);
+    }
+}
+
+async function deletePost(id) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        try {
+            await fetch(`${API_URL}/posts/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        }
+    }
+}
+
+async function viewComments(postId) {
+    try {
+        const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const comments = await response.json();
+        displayComments(comments);
+        commentsSection.style.display = 'block';
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+    }
+}
+
+function displayComments(comments) {
+    const commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+
+    comments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.classList.add('comment');
+        commentElement.innerHTML = `
+            <p>${comment.content}</p>
+            <small>By ${comment.user.username} on ${new Date(comment.createdAt).toLocaleDateString()}</small>
+            <button onclick="deleteComment(${comment.id})">Delete</button>
+        `;
+        commentsList.appendChild(commentElement);
+    });
+}
+
+async function deleteComment(id) {
+    if (confirm('Are you sure you want to delete this comment?')) {
+        try {
+            await fetch(`${API_URL}/comments/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            // Refresh comments after deletion
+            viewComments(currentPostId);
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        }
     }
 }
 
