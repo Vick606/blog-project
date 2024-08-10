@@ -170,20 +170,30 @@ async function viewComments(postId) {
     }
 }
 
-function displayComments(comments) {
-    const commentsList = document.getElementById('comments-list');
-    commentsList.innerHTML = '';
+function displayPosts(posts) {
+    const postsList = document.getElementById('posts-list');
+    postsList.innerHTML = '';
 
-    comments.forEach(comment => {
-        const commentElement = document.createElement('div');
-        commentElement.classList.add('comment');
-        commentElement.innerHTML = `
-            <p>${comment.content}</p>
-            <small>By ${comment.user.username} on ${new Date(comment.createdAt).toLocaleDateString()}</small>
-            <button onclick="deleteComment(${comment.id})">Delete</button>
+    posts.forEach((post, index) => {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+        postElement.setAttribute('data-aos', 'fade-up');
+        postElement.setAttribute('data-aos-delay', index * 100);
+        postElement.innerHTML = `
+            <h3>${post.title}</h3>
+            <p class="${post.published ? 'published' : 'unpublished'}">
+                ${post.published ? 'Published' : 'Unpublished'}
+            </p>
+            <button onclick="editPost(${post.id})" class="action-btn">Edit</button>
+            <button onclick="togglePublishPost(${post.id}, ${!post.published})" class="action-btn">
+                ${post.published ? 'Unpublish' : 'Publish'}
+            </button>
+            <button onclick="deletePost(${post.id})" class="action-btn">Delete</button>
         `;
-        commentsList.appendChild(commentElement);
+        postsList.appendChild(postElement);
     });
+
+    AOS.init();
 }
 
 async function deleteComment(id) {
@@ -206,3 +216,7 @@ if (token) {
     postsSection.style.display = 'block';
     fetchPosts();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    AOS.init();
+});
