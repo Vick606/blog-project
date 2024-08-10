@@ -1,8 +1,10 @@
 body {
-    font-family: "Roboto", sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
 }
 
 header {
@@ -13,9 +15,9 @@ header {
 }
 
 main {
-    padding: 2rem;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
+    padding: 20px;
 }
 
 form {
@@ -27,24 +29,39 @@ form {
 
 input, textarea, button {
     padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.action-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+    background-color: #0056b3;
 }
 
 .post {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.post:hover {
+    transform: translateY(-5px);
 }
 
 .post h3 {
     margin-top: 0;
-}
-
-.comment {
-    background-color: #e9e9e9;
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
+    color: #007bff;
 }
 
 .published {
@@ -53,4 +70,13 @@ input, textarea, button {
 
 .unpublished {
     color: red;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
 }
