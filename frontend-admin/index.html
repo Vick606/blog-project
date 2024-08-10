@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Admin</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 </head>
 <body>
     <header>
-        <h1>Blog Admin</h1>
+        <h1 class="logo">Blog Admin</h1>
     </header>
     <main>
-        <section id="login-section">
+        <section id="login-section" data-aos="fade-up">
             <h2>Login</h2>
             <form id="login-form">
                 <input type="email" id="email" placeholder="Email" required>
@@ -22,19 +25,15 @@
         </section>
         <section id="posts-section" style="display: none;">
             <h2>Manage Posts</h2>
-            <button id="new-post-btn">New Post</button>
-            <div id="post-form-container" style="display: none;">
+            <button id="new-post-btn" class="action-btn" data-aos="fade-up">New Post</button>
+            <div id="post-form-container" style="display: none;" data-aos="fade-up">
                 <form id="post-form">
                     <input type="text" id="title" placeholder="Title" required>
                     <textarea id="content" placeholder="Content" required></textarea>
-                    <button type="submit">Save Post</button>
+                    <button type="submit" class="action-btn">Save Post</button>
                 </form>
             </div>
             <div id="posts-list"></div>
-        </section>
-        <section id="comments-section" style="display: none;">
-            <h2>Manage Comments</h2>
-            <div id="comments-list"></div>
         </section>
     </main>
     <script src="app.js"></script>
