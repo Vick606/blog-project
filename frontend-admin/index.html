@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Admin</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
     <header>
@@ -21,12 +22,19 @@
         </section>
         <section id="posts-section" style="display: none;">
             <h2>Manage Posts</h2>
-            <form id="post-form">
-                <input type="text" id="title" placeholder="Title" required>
-                <textarea id="content" placeholder="Content" required></textarea>
-                <button type="submit">Create Post</button>
-            </form>
+            <button id="new-post-btn">New Post</button>
+            <div id="post-form-container" style="display: none;">
+                <form id="post-form">
+                    <input type="text" id="title" placeholder="Title" required>
+                    <textarea id="content" placeholder="Content" required></textarea>
+                    <button type="submit">Save Post</button>
+                </form>
+            </div>
             <div id="posts-list"></div>
+        </section>
+        <section id="comments-section" style="display: none;">
+            <h2>Manage Comments</h2>
+            <div id="comments-list"></div>
         </section>
     </main>
     <script src="app.js"></script>
