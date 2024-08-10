@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Blog</title>
+    <title>Minimalist Tech Blog</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 </head>
 <body>
     <header>
-        <h1>My Blog</h1>
+        <h1 class="logo">Minimalist Tech</h1>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link">About</a></li>
+                <li><a href="#" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
     </header>
     <main id="posts-container">
         <!-- Posts will be dynamically inserted here -->
     </main>
+    <footer>
+        <p>&copy; 2023 Minimalist Tech Blog. All rights reserved.</p>
+    </footer>
     <script src="app.js"></script>
 </body>
 </html>
